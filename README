@@ -1,0 +1,76 @@
+Scripts for evaluating Bard.
+
+Author: Connor Imes
+
+--------------------------------------------------------------------------------
+
+Library code repositories at:
+
+Bard
+  https://github.com/libpoet/bard
+Heartbeats 2.0
+  https://github.com/libheartbeats/heartbeats
+  (Checkout the "bard" branch for hb-energy-odroid that works on ODROID-XU3 systems)
+
+Note: you may have to run "sudo ldconfig" after running "sudo make install" for Heartbeats and Bard libraries.
+
+--------------------------------------------------------------------------------
+
+Benchmark patches at:
+
+http://poet.cs.uchicago.edu/
+
+In benchmark Makefiles (and in PARSEC's "config/gcc-hooks-poet.bldconf"), replace "-lhb-energy-msr" as necessary (e.g. with "-lhb-energy-odroid -lpthread").
+
+--------------------------------------------------------------------------------
+
+This project contains the following scripts:
+
+apps/*/power-control/pre-run.sh
+  Application-specific configurations.
+  You will need to change the location of the binary and any inputs passed as arguments to it to match your system setup.
+
+powerQoS/
+  Third-party python utilities for communicating with an external WattsUp power meter.
+  This is not used by default.
+
+bard_init_state.sh
+  Used by other scripts to initialize the system configuration to the maximum specified by "/etc/poet/cpu_config".
+
+bard_perf_target.sh
+  Run an application with a performance target (like POET).
+
+bard_pwr_target.sh
+  Run an application with a power target (new to Bard).
+
+bard_switch_pwr_perf_targets.sh
+  Run an application with a performance target, then switch to a power target (application must support this runtime check).
+
+bard_targets.sh
+  Run an application with a set of performance or power targets.
+
+cpufreq-all-set-governor.sh
+  Set the DVFS governor on all cores (sets "ondemand" by default).
+
+hb_cleanup.sh
+  Cleanup shared memory
+
+results_to_bard.sh
+  Process a results file to produce "control_config" and "cpu_config" files for Bard (by default, Bard looks for them in "/etc/poet/").
+
+shmoo.sh
+  Characterize an application by running in all system configurations.
+
+shmoo-odroidxu3.sh
+  Characterize an application by running in all system configurations.
+  The ODROID-XU3 has a non-standard environment, hence the need for this separate script.
+  Note: The script does not characterize both big and LITTLE cores automatically - modify the script to set the "USE_BIG" value to 0 or 1 to switch between the LITTLE and big cores.
+
+
+--------------------------------------------------------------------------------
+
+Additional Notes:
+
+Before you can use Bard, you must install configs - default ones can be found in the Bard source and manually copied to "/etc/poet/":
+  sudo mkdir -p /etc/poet
+  sudo cp config/default/* /etc/poet

@@ -1,0 +1,12 @@
+*~
+
+heartenabled/
+*.log
+power.txt
+*.results
+*.pyc
+
+out_1M.txt
+out_10M.txt
+output.txt
+test.264
