@@ -1,7 +1,8 @@
-case `uname -i` in
-  armv7l) ARCH=arm
+#!/bin/bash
+case $(uname -i) in
+  armv7l) export ARCH=arm
           ;;
-  x86_64) ARCH=amd64
+  x86_64) export ARCH=amd64
           ;;
-  *) ARCH=x86
+  *) export ARCH=x86
 esac

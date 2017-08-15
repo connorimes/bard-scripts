@@ -1,8 +1,8 @@
-NUMBER=500
-BINARY=/local/benchmarks/stream/stream_omp
+#!/bin/bash
+export NUMBER=500
+export BINARY=/local/benchmarks/stream/stream_omp
 WINDOW=50
-NTHREADS=`nproc`
-ARGS=""
-PREFIX="STREAM"
+export ARGS=""
+export PREFIX="STREAM"
 
 export ${PREFIX}_WINDOW_SIZE=$WINDOW

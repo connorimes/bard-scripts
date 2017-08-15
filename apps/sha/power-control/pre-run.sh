@@ -1,8 +1,9 @@
-NUMBER=1000
-BINARY=/local/benchmarks/parmibench/Security/sha/sha
+#!/bin/bash
+export NUMBER=1000
+export BINARY=/local/benchmarks/parmibench/Security/sha/sha
 WINDOW=50
-NTHREADS=`nproc`
-ARGS="-P -$NTHREADS"
-PREFIX="SHA"
+NTHREADS=$(nproc)
+export ARGS="-P -$NTHREADS"
+export PREFIX="SHA"
 
 export ${PREFIX}_WINDOW_SIZE=$WINDOW

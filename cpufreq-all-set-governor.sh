@@ -8,14 +8,14 @@
 # 7/26/2014
 
 # Must run script with root privileges
-if [ `id -u` -ne 0 ]
+if [ "$(id -u)" -ne 0 ]
 then
   echo "Please run with root privileges"
   exit 1
 fi
 
 # Get the number of cores
-ncores=`nproc`
+ncores=$(nproc)
 
 # Decide on the scaling governor
 governor=$1
@@ -26,9 +26,9 @@ then
 fi
 
 # Apply the governor setting to each core
-for (( i=0; i<$ncores; i++ ))
+for (( i=0; i<ncores; i++ ))
 do
   echo "Setting $governor scaling governor on cpu$i"
-  echo $governor > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor
+  echo "$governor" > /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor
 done
 

@@ -8,7 +8,7 @@ USE_BIG=1
 USE_POWERMON=0
 
 # Must run script with root privileges
-if [ `id -u` -ne 0 ]
+if [ "$(id -u)" -ne 0 ]
 then
   echo "Please run with root privileges"
   exit 1
@@ -16,27 +16,27 @@ fi
 
 # Get the app to run (must match directory structure)
 APP=$1
-if [ -z $APP ]
+if [ -z "$APP" ]
 then
   echo "Usage:"
   echo "  $0 <application>"
   exit 1
 fi
 
-PRERUN=apps/$APP/power-control/pre-run.sh
-if [ ! -e $PRERUN ]
+PRERUN="apps/$APP/power-control/pre-run.sh"
+if [ ! -e "$PRERUN" ]
 then
   echo "pre-run script not found: $PRERUN"
   exit 1
 fi
-source $PRERUN
+source "$PRERUN"
 
 export POET_DISABLE_CONTROL=1
 export HEARTBEAT_ENABLED_DIR=heartenabled/
 rm -Rf ${HEARTBEAT_ENABLED_DIR}
 mkdir -p ${HEARTBEAT_ENABLED_DIR}
 
-RESULTS_FILE=${PREFIX}".results"
+RESULTS_FILE="${PREFIX}.results"
 POWER_MON=./powerQoS/pyWattsup-hank.py
 
 # System properties
@@ -63,23 +63,23 @@ else
 fi
 
 # Run all configuration for big or LITTLE cores
-for (( i=$CORES_END; i>=$CORES_START; i-- ))
+for (( i=CORES_END; i>=CORES_START; i-- ))
 do
 
-  for (( mask=0x01, ctr=$i; ctr > $CORES_START; ctr-- ))
+  for (( mask=0x01, ctr=i; ctr > CORES_START; ctr-- ))
   do
     mask=$((mask << 1 | 0x01))
   done
   mask=$((mask << CORES_START))
-  mask=`printf "0x%X" $mask` # Get the hex value as a string
+  mask=$(printf "0x%X" $mask) # Get the hex value as a string
 
-  for (( j=0; j<$NUM_FREQUENCIES; j++ ))
+  for (( j=0; j<NUM_FREQUENCIES; j++ ))
   do
 
     # Configure the CPU speeds
     # No DVFS on XU3, always uses performance governor.
     # Just set the max frequency to our target
-    for (( k=$LITTLE_CORES_START; k<=$LITTLE_CORES_END; k++ ))
+    for (( k=LITTLE_CORES_START; k<=LITTLE_CORES_END; k++ ))
     do
       if [ $USE_BIG -eq 1 ]; then
         # Not using this core - reduce speed to reduce power
@@ -88,9 +88,9 @@ do
         freq=${LITTLE_FREQUENCIES[$j]}
       fi
       echo "Setting speed $freq on cpu$k"
-      echo $freq > /sys/devices/system/cpu/cpu$k/cpufreq/scaling_max_freq
+      echo "$freq" > /sys/devices/system/cpu/cpu$k/cpufreq/scaling_max_freq
     done
-    for (( k=$BIG_CORES_START; k<=$BIG_CORES_END; k++ ))
+    for (( k=BIG_CORES_START; k<=BIG_CORES_END; k++ ))
     do
       if [ $USE_BIG -eq 1 ]; then
         freq=${BIG_FREQUENCIES[$j]}
@@ -99,7 +99,7 @@ do
         freq=${BIG_FREQUENCIES[$NUM_BIG_FREQUENCIES - 1]}
       fi
       echo "Setting speed $freq on cpu$k"
-      echo $freq > /sys/devices/system/cpu/cpu$k/cpufreq/scaling_max_freq
+      echo "$freq" > /sys/devices/system/cpu/cpu$k/cpufreq/scaling_max_freq
     done
     
     sleep 1
@@ -116,33 +116,33 @@ do
         $POWER_MON start
       fi
     
-      echo taskset $mask ${BINARY} ${ARGS}
-      taskset $mask ${BINARY} ${ARGS} 
+      echo "taskset $mask ${BINARY} ${ARGS}"
+      taskset "$mask" "${BINARY} ${ARGS}"
       #numactl --interleave=0-$core --physcpubind=$CORES_START-$i ${BINARY} ${ARGS}
 
       if [ $USE_POWERMON -gt 0 ]
       then
         $POWER_MON stop > power.txt
-        power2=`cat power.txt | awk '/Pavg/ {print $2}'`
-        joules2=`cat power.txt | awk '/Joules/ {print $2}'`
-        cp power.txt power_$mask-$freq.txt
+        power2=$(awk '/Pavg/ {print $2}' power.txt)
+        joules2=$(awk '/Joules/ {print $2}' power.txt)
+        cp power.txt "power_$mask-$freq.txt"
       fi
     
-      hr=`tail -n 1 heartbeat.log | awk '// {print $4}'`
-      power=`tail -n 1 heartbeat.log | awk '// {print $10}'`
-      joules=`echo "scale=4; $NUMBER / $hr * $power" | bc`
+      hr=$(tail -n 1 heartbeat.log | awk '// {print $4}')
+      power=$(tail -n 1 heartbeat.log | awk '// {print $10}')
+      joules=$(echo "scale=4; $NUMBER / $hr * $power" | bc)
       c=$(echo "$power > 0" | bc)
 
       source hb_cleanup.sh
     done
 
-    if [ ! -f $RESULTS_FILE ]
+    if [ ! -f "$RESULTS_FILE" ]
     then
-      echo "cores freq Rate Power Energy WU_PWR_AVG WU_ENERGY" > $RESULTS_FILE
+      echo "cores freq Rate Power Energy WU_PWR_AVG WU_ENERGY" > "$RESULTS_FILE"
     fi
-    echo $mask $freq $hr $power $joules $power2 $joules2 >> $RESULTS_FILE
+    echo "$mask $freq $hr $power $joules $power2 $joules2" >> "$RESULTS_FILE"
     
-    cp heartbeat.log heartbeat_$mask-$freq.log
+    cp heartbeat.log "heartbeat_$mask-$freq.log"
 
     sleep 20
 
