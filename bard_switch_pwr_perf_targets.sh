@@ -58,7 +58,7 @@ do
 	source bard_init_state.sh
 
 	echo "taskset $HIGH_STATE_CORES ${BINARY} ${ARGS}"
-	taskset "$HIGH_STATE_CORES" "${BINARY} ${ARGS}" &
+	taskset "$HIGH_STATE_CORES" "${BINARY}" "${ARGS}" &
 	pid=$!
 	loop=0
 	# sleep while process is still running

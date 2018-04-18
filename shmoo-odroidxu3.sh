@@ -117,7 +117,7 @@ do
       fi
     
       echo "taskset $mask ${BINARY} ${ARGS}"
-      taskset "$mask" "${BINARY} ${ARGS}"
+      taskset "$mask" "${BINARY}" "${ARGS}"
       #numactl --interleave=0-$core --physcpubind=$CORES_START-$i ${BINARY} ${ARGS}
 
       if [ $USE_POWERMON -gt 0 ]
