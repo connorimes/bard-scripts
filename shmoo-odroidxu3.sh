@@ -115,10 +115,10 @@ do
       then
         $POWER_MON start
       fi
-    
-      echo "taskset $mask ${BINARY} ${ARGS}"
-      taskset "$mask" "${BINARY}" "${ARGS}"
-      #numactl --interleave=0-$core --physcpubind=$CORES_START-$i ${BINARY} ${ARGS}
+
+      CMD=(taskset $mask "${BINARY}" "${ARGS[@]}")
+      echo "${CMD[@]}"
+      "${CMD[@]}"
 
       if [ $USE_POWERMON -gt 0 ]
       then

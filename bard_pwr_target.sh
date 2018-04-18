@@ -52,8 +52,9 @@ do
 	# Start application in highest system setting Bard supports
 	source bard_init_state.sh
 
-	echo "taskset $HIGH_STATE_CORES ${BINARY} ${ARGS}"
-	taskset "$HIGH_STATE_CORES" "${BINARY}" "${ARGS}" &
+	CMD=(taskset $HIGH_STATE_CORES "${BINARY}" "${ARGS[@]}")
+	echo "${CMD[@]}"
+	"${CMD[@]}" &
 	pid=$!
 	loop=0
 	# sleep while process is still running
