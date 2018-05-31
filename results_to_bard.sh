@@ -77,7 +77,7 @@ while read line; do
 	done
 	# print to file
 	printf "%s\t%s\t%s\n" "$i" "$cores" "$freqs" >> "$CPU_CFG"
-	printf "%s\t%s\t%s\t0\n" >> "$i" "$speedup" "$powerup" "$CTL_CFG"
+	printf "%s\t%s\t%s\t0\n" "$i" "$speedup" "$powerup" >> "$CTL_CFG"
 	((i++))	
 done < "$RESULTS_FILE.temp"
 
